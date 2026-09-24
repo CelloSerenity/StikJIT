@@ -209,7 +209,7 @@ let paths = DDIPaths.default(
 )
 ```
 
-Use the same `DDIPaths` for preparation, JIT enablement, and cache reset. Do not validate cached DDI versions or contents yourself; StikJIT reuses readable, nonempty files and lets the image mounter decide whether they work.
+Use the same `DDIPaths` for preparation, JIT enablement, and cache reset. The cache contains the image, trust cache, build manifest, cryptex info, and root hash. Do not validate cached DDI versions or contents yourself; StikJIT reuses readable, nonempty files and lets the device's cryptex service decide whether they work.
 
 A successful DDI mount persists until the device reboots, so it normally needs to be mounted only once per boot.
 

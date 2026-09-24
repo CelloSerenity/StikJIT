@@ -144,9 +144,7 @@ public enum StikJIT {
                         progress(.downloadingDDI(fraction: fraction, status: status))
                     }
                 }
-                try session.mountDDI(imagePath: paths.imagePath,
-                                     trustcachePath: paths.trustcachePath,
-                                     manifestPath: paths.manifestPath) { fraction in
+                try session.mountDDI(from: URL(fileURLWithPath: paths.manifestPath).deletingLastPathComponent().path) { fraction in
                     progress(.mountingDDI(fraction: fraction))
                 }
                 progress(.verifyingDDI)
@@ -183,9 +181,7 @@ public enum StikJIT {
                                 paths: DDIPaths,
                                 progress: @escaping (Double) -> Void = { _ in }) throws {
         let session = DDISession(pairingFilePath: pairingFile.path, configuration: configuration)
-        try session.mountDDI(imagePath: paths.imagePath,
-                              trustcachePath: paths.trustcachePath,
-                              manifestPath: paths.manifestPath,
-                              progress: progress)
+        try session.mountDDI(from: URL(fileURLWithPath: paths.manifestPath).deletingLastPathComponent().path,
+                             progress: progress)
     }
 }

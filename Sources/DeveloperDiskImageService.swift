@@ -8,10 +8,20 @@ public struct DDIPaths: Sendable {
 
     public var manifestPath: String
 
-    public init(imagePath: String, trustcachePath: String, manifestPath: String) {
+    public var cryptexInfoPath: String
+
+    public var rootHashPath: String
+
+    public init(imagePath: String,
+                trustcachePath: String,
+                manifestPath: String,
+                cryptexInfoPath: String? = nil,
+                rootHashPath: String? = nil) {
         self.imagePath = imagePath
         self.trustcachePath = trustcachePath
         self.manifestPath = manifestPath
+        self.cryptexInfoPath = cryptexInfoPath ?? "\(imagePath).cryptex_info"
+        self.rootHashPath = rootHashPath ?? "\(imagePath).root_hash"
     }
 
     public static func `default`(in directory: URL) -> DDIPaths {
@@ -35,7 +45,7 @@ public struct DDIPaths: Sendable {
     }
 
     var allPaths: [String] {
-        [imagePath, trustcachePath, manifestPath]
+        [imagePath, trustcachePath, manifestPath, cryptexInfoPath, rootHashPath]
     }
 
     func removeCachedFiles() throws {
@@ -53,13 +63,15 @@ struct DDIDownloadItem {
 }
 
 enum DDIDownloadCatalog {
-    private static let baseURL = URL(string: "https://github.com/doronz88/DeveloperDiskImage/raw/refs/heads/main/PersonalizedImages/Xcode_iOS_DDI_Personalized")!
+    private static let baseURL = URL(string: "https://github.com/doronz88/DeveloperDiskImage/raw/refs/heads/main/PersonalizedImages/Xcode_iOS_DDI_Cryptex")!
 
     static func items(for paths: DDIPaths) -> [DDIDownloadItem] {
         [
             DDIDownloadItem(name: "BuildManifest.plist", destinationPath: paths.manifestPath, url: baseURL.appendingPathComponent("BuildManifest.plist")),
             DDIDownloadItem(name: "Image.dmg", destinationPath: paths.imagePath, url: baseURL.appendingPathComponent("Image.dmg")),
             DDIDownloadItem(name: "Image.dmg.trustcache", destinationPath: paths.trustcachePath, url: baseURL.appendingPathComponent("Image.dmg.trustcache")),
+            DDIDownloadItem(name: "Image.dmg.cryptex_info", destinationPath: paths.cryptexInfoPath, url: baseURL.appendingPathComponent("Image.dmg.cryptex_info")),
+            DDIDownloadItem(name: "Image.dmg.root_hash", destinationPath: paths.rootHashPath, url: baseURL.appendingPathComponent("Image.dmg.root_hash")),
         ]
     }
 }
