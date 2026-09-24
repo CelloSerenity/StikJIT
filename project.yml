@@ -34,12 +34,18 @@ targets:
         DEFINES_MODULE: YES
         BUILD_LIBRARY_FOR_DISTRIBUTION: YES
         SKIP_INSTALL: NO
-        # idevice FFI: modulemap/headers to compile `import idevice`, and force_load the
-        # static lib so all its symbols are embedded in the framework binary (self-contained).
+        # Embed only the idevice code reachable from StikJIT. Keep archive symbols
+        # private so unused FFI/Rust exports do not become dead-strip roots.
         SWIFT_INCLUDE_PATHS: "$(SRCROOT)/idevice $(SRCROOT)/iokit"
         HEADER_SEARCH_PATHS: "$(SRCROOT)/idevice $(SRCROOT)/iokit"
         LIBRARY_SEARCH_PATHS: "$(SRCROOT)/idevice"
-        OTHER_LDFLAGS: "-force_load $(SRCROOT)/idevice/libidevice_ffi.a"
+        OTHER_LDFLAGS: "$(inherited) -Wl,-hidden-lidevice_ffi"
+        DEAD_CODE_STRIPPING: YES
+      configs:
+        Release:
+          # Remove private symbol names from the shipped binary; keep the dSYM.
+          STRIP_INSTALLED_PRODUCT: YES
+          STRIP_STYLE: non-global
 
 schemes:
   StikJIT:
